@@ -1,67 +1,31 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="审美积累，一处关于阅读、文字与色彩的私人存档。"
-    />
-    <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#f3f3eb" />
-    <title>书摘 · 审美积累</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/style.css?v=69ad37f" />
-  </head>
-  <body data-page="quotes">
-    <a class="skip-link" href="#main">跳至内容</a>
-    <header class="masthead">
-      <a class="wordmark" href="index.html"
-        >审美积累<span class="wordmark-dot" aria-hidden="true"></span
-      ></a>
-      <nav aria-label="主要导航">
-        <a class="back-home" href="index.html">回到山水</a
-        ><a href="books.html">书单</a
-        ><a href="quotes.html" aria-current="page">书摘</a
-        ><a href="palettes.html">色库</a>
-      </nav>
-    </header>
-    <main id="main" class="archive">
-      <section class="page-intro">
-        <p class="eyebrow">私 人 藏 集 <span> / 二</span></p>
-        <h1>书摘<span class="title-line" aria-hidden="true"></span></h1>
-        <p class="intro-note">留下一句话，也留下自己的思考。</p>
-      </section>
-      <form class="quote-filters" role="search">
-        <label
-          >所读之书<select id="book-filter">
-            <option value="">全部</option>
-          </select></label
-        ><label class="search-label"
-          >寻一句文字<input
-            id="quote-search"
-            type="search"
-            placeholder="搜索原文、整理、章节或标签"
-            autocomplete="off"
-        /></label>
-      </form>
-      <p id="result-count" class="meta" aria-live="polite"></p>
-      <div id="content" aria-busy="true">
-        <p class="loading">正在展开纸页……</p>
-      </div>
-      <noscript>请启用 JavaScript 以读取藏集数据。</noscript>
-    </main>
-    <footer>
-      <span>审美积累</span>
-      <p>所见，所读，所感。<br />慢慢积累，自有回响。</p>
-      <a href="index.html">回到山水 ↗</a>
-    </footer>
-    <div id="announcement" class="sr-only" role="status"></div>
-    <script src="js/app.js?v=69ad37f" defer></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="审美积累 · 书摘">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f0eade">
+<title>书摘 · 审美积累</title>
+<link rel="icon" href="favicon.png?v=dev" type="image/png">
+<link rel="apple-touch-icon" href="favicon-180.png?v=dev">
+<link rel="preload" href="assets/fonts/brush.woff2?v=dev" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/base.css?v=dev">
+<link rel="stylesheet" href="css/pages.css?v=dev">
+</head>
+<body class="page page-quotes">
+<a class="seal" href="./" aria-label="滴水 · 回到首页"><img src="assets/img/seal.png" alt="" width="60" height="82"></a>
+<header class="page-head">
+  <div class="head-art" aria-hidden="true"></div>
+  <nav class="page-nav" aria-label="栏目"><a href="books.html">书单</a><a href="quotes.html" aria-current="page">书摘</a><a href="palettes.html">色库</a></nav>
+  <div class="head-text">
+    <h1 class="page-title">书摘</h1>
+    <p class="page-sub">高亮之处，再整理成自己的脉络。</p>
+  </div>
+  <div class="brush-rule" aria-hidden="true"></div>
+</header>
+<main id="content" class="content" aria-busy="true"></main>
+<footer class="page-foot" aria-hidden="true"><span class="foot-stroke"></span></footer>
+<script type="module" src="js/quotes.js?v=dev"></script>
+</body>
 </html>

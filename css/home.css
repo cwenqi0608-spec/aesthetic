@@ -1,0 +1,33 @@
+html, body.home { height: 100%; overflow: hidden; background: var(--paper); overscroll-behavior: none; }
+.scene { position: fixed; inset: 0; overflow: hidden; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+.scene-art, .scene-art img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scene-art img { object-fit: cover; }
+#water, #drops { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#water { opacity: 0; transition: opacity .6s; }
+.gl-ready #water { opacity: 1; }
+.pools { position: absolute; inset: 0; pointer-events: none; }
+.pool { position: absolute; border-radius: 50%; pointer-events: none; outline: none; }
+.pool:focus-visible { outline: none; }
+
+.pool-word {
+  position: absolute; z-index: 5; pointer-events: none; white-space: nowrap;
+  font-family: var(--brush); color: var(--ink); line-height: 1; letter-spacing: .14em; padding-left: .14em;
+  transform: translate(-50%, -100%) translateY(.7em) scaleY(.6);
+  transform-origin: 50% 100%;
+  opacity: 0; filter: blur(10px);
+  transition: opacity .4s ease, filter .4s ease, transform .5s ease, letter-spacing .5s ease;
+}
+.pool-word::before { /* ink cloud diffusing behind the word */
+  content: ""; position: absolute; left: 50%; top: 55%; width: 2.6em; height: 1.5em; z-index: -1;
+  transform: translate(-50%, -50%) scale(.3); border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(240, 234, 222, .78), rgba(240, 234, 222, .45) 55%, rgba(240, 234, 222, 0));
+  opacity: 0; transition: transform 1.4s var(--ease), opacity .8s ease;
+}
+.pool-word.on {
+  opacity: .94; filter: blur(0); transform: translate(-50%, -100%) translateY(0) scaleY(1);
+  text-shadow: 0 0 .5px rgba(35, 36, 31, .6);
+  transition: opacity .9s ease, filter 1.2s var(--ease), transform 1.2s var(--ease);
+}
+.pool-word.on::before { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.scene::after { content: ""; position: absolute; inset: 0; background: var(--paper); opacity: 0; pointer-events: none; transition: opacity .42s ease; z-index: 40; }
+.scene.leaving::after { opacity: 1; }

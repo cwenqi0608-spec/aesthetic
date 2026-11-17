@@ -1,69 +1,38 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="审美积累，一处关于阅读、文字与色彩的私人存档。"
-    />
-    <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#f3f3eb" />
-    <title>山水之间 · 审美积累</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/style.css?v=69ad37f" />
-  </head>
-  <body data-page="home">
-    <a class="skip-link" href="#landscape-nav">跳至山水导航</a>
-    <main id="main" class="landscape">
-      <canvas id="ink-scene" aria-hidden="true"></canvas>
-      <header class="home-title">
-        <p class="eyebrow">一 方 私 人 山 水</p>
-        <h1>审美积累</h1>
-        <div class="home-inscription">
-          <p>于无声处，<br />积一滴，成一境。</p>
-          <span class="seal" aria-hidden="true">积</span>
-        </div>
-      </header>
-      <nav id="landscape-nav" aria-label="水中藏集">
-        <a
-          class="puddle-link"
-          data-pool="0"
-          href="books.html"
-          aria-label="进入书单"
-          ><span>书单</span></a
-        ><a
-          class="puddle-link"
-          data-pool="1"
-          href="quotes.html"
-          aria-label="进入书摘"
-          ><span>书摘</span></a
-        ><a
-          class="puddle-link"
-          data-pool="2"
-          href="palettes.html"
-          aria-label="进入色库"
-          ><span>色库</span></a
-        >
-      </nav>
-      <p class="scene-note">水滴石上 · 藏集其中</p>
-      <div class="home-bottom">
-        <p>移近水面，翻开一页</p>
-        <nav aria-label="文字导航">
-          <a href="books.html">书单</a><i>·</i><a href="quotes.html">书摘</a
-          ><i>·</i><a href="palettes.html">色库</a>
-        </nav>
-        <span>阅读 / 文字 / 色彩</span>
-      </div>
-      <noscript
-        ><p class="no-script">山水暂歇，请从下方导航进入藏集。</p></noscript
-      >
-    </main>
-    <script src="js/home.js?v=69ad37f" defer></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="审美积累 · 滴水">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f0eade">
+<title>审美积累</title>
+<link rel="icon" href="favicon.png?v=dev" type="image/png">
+<link rel="apple-touch-icon" href="favicon-180.png?v=dev">
+<link rel="preload" href="assets/fonts/brush.woff2?v=dev" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/base.css?v=dev">
+<link rel="stylesheet" href="css/home.css?v=dev">
+</head>
+<body class="home">
+<main class="scene">
+  <picture class="scene-art">
+    <source media="(max-aspect-ratio: 999/1000)" type="image/webp" srcset="assets/img/home-tall-960.webp 960w, assets/img/home-tall-1440.webp 1440w" sizes="100vw">
+    <source media="(max-aspect-ratio: 999/1000)" srcset="assets/img/home-tall-960.jpg 960w, assets/img/home-tall-1440.jpg 1440w" sizes="100vw">
+    <source type="image/webp" srcset="assets/img/home-wide-1600.webp 1600w, assets/img/home-wide-2560.webp 2560w" sizes="100vw">
+    <img src="assets/img/home-wide-1600.jpg" srcset="assets/img/home-wide-1600.jpg 1600w, assets/img/home-wide-2560.jpg 2560w" sizes="100vw" alt="" fetchpriority="high" decoding="async">
+  </picture>
+  <canvas id="water" aria-hidden="true"></canvas>
+  <canvas id="drops" aria-hidden="true"></canvas>
+  <a class="seal" href="./" aria-label="滴水 · 回到首页"><img src="assets/img/seal.png" alt="" width="60" height="82"></a>
+  <nav class="pools" aria-label="三处水面">
+    <a class="pool" href="books.html" aria-label="书单"></a>
+    <a class="pool" href="quotes.html" aria-label="书摘"></a>
+    <a class="pool" href="palettes.html" aria-label="色库"></a>
+  </nav>
+  <div class="pool-word" aria-hidden="true">书单</div>
+  <div class="pool-word" aria-hidden="true">书摘</div>
+  <div class="pool-word" aria-hidden="true">色库</div>
+</main>
+<script type="module" src="js/home.js?v=dev"></script>
+</body>
 </html>

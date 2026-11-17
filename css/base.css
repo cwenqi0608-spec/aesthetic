@@ -1,0 +1,50 @@
+/* 审美积累 · shared 水墨 language */
+@font-face { font-family: "Dishui Brush"; src: url("../assets/fonts/brush.woff2?v=dev") format("woff2"); font-display: swap; }
+@font-face { font-family: "Dishui Serif"; src: url("../assets/fonts/serif.woff2?v=dev") format("woff2"); font-weight: 300 700; font-display: swap; }
+
+:root {
+  --paper: #f0eade;
+  --paper-2: #e8e1d1;
+  --paper-3: #ddd5c2;
+  --mist: #dcddd6;
+  --celadon: #b6ccc0;
+  --celadon-2: #8fab9e;
+  --celadon-deep: #557568;
+  --stone: #767670;
+  --water: #8e9791;
+  --ink: #23241f;
+  --ink-2: #41403c;
+  --ink-3: #6a6b66;
+  --seal: #c3392d;
+  --brush: "Dishui Brush", "Ma Shan Zheng", "STXingkai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+  --kai: "Kaiti SC", "STKaiti", "KaiTi", "Dishui Brush", serif;
+  --serif: "Dishui Serif", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --ease: cubic-bezier(.22, .7, .2, 1);
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; color: var(--ink); font-family: var(--serif); font-size: 16px; line-height: 1.85;
+  background: var(--paper) url("../assets/img/paper.jpg?v=dev") repeat; background-size: 512px;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+button, input { font: inherit; color: inherit; }
+::selection { background: rgba(182, 204, 192, .6); }
+:focus-visible { outline: 1.5px dashed var(--seal); outline-offset: 4px; }
+
+/* the stamped seal, top-left on every page — links home */
+.seal {
+  position: fixed; z-index: 30; top: max(18px, env(safe-area-inset-top)); left: max(18px, env(safe-area-inset-left));
+  width: 40px; display: block; mix-blend-mode: multiply; opacity: .94;
+  transition: transform .5s var(--ease), opacity .3s;
+  transform: rotate(-4deg);
+}
+.seal img { width: 100%; height: auto; filter: saturate(1.05) contrast(1.02); }
+.seal:hover { transform: rotate(-1deg) scale(1.06); opacity: 1; }
+@media (max-width: 640px) { .seal { width: 32px; top: max(14px, env(safe-area-inset-top)); left: max(14px, env(safe-area-inset-left)); } }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
