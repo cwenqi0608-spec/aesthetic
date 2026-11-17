@@ -32,13 +32,34 @@ function renderBooks(books) {
   books.forEach((book, index) => {
     const article = el('article', 'book');
     const stage = el('div', 'cover-stage');
-    const frame = el('div', 'cover-frame');
-    const path = safeImage(book.cover);
-    if (path) {
-      const img = el('img'); img.src = path; img.alt = `《${book.title || ''}》书籍封面`; img.decoding = 'async';
-      if (index > 0) img.loading = 'lazy';
-      frame.append(img);
-    }
+    const frame = el('button', 'cover-frame');
+    frame.type = 'button';
+    frame.setAttribute('aria-label', `《${book.title || ''}》立体封面`);
+    frame.setAttribute('aria-pressed', 'false');
+    frame.addEventListener('click', () => {
+      const turned = frame.classList.toggle('is-turned');
+      frame.setAttribute('aria-pressed', String(turned));
+    });
+    const palette = book.coverPalette || {};
+    ['bg', 'title', 'text', 'spine', 'accent'].forEach(key => {
+      if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(palette[key] || '')) {
+        frame.style.setProperty(`--cover-${key}`, palette[key]);
+      }
+    });
+    const object = el('span', 'cover-object');
+    object.setAttribute('aria-hidden', 'true');
+    const front = el('span', 'cover-front');
+    if (book.originalTitle) front.append(el('span', 'cover-original', book.originalTitle));
+    front.append(el('span', 'cover-title', book.title));
+    const motif = el('span', 'cover-motif');
+    if (book.subtitle) motif.append(el('span', 'cover-subtitle', book.subtitle));
+    front.append(motif);
+    const credits = el('span', 'cover-credits');
+    if (book.authorCredit || book.author) credits.append(el('span', 'cover-author', book.authorCredit || book.author));
+    if (book.publisher) credits.append(el('span', 'cover-publisher', book.publisher));
+    front.append(credits);
+    object.append(el('span', 'cover-back'), el('span', 'cover-pages'), el('span', 'cover-spine', book.title), front);
+    frame.append(object);
     stage.append(frame);
     const info = el('div', 'book-info');
     const kicker = el('div', 'book-kicker');
@@ -58,6 +79,22 @@ function renderBooks(books) {
     article.append(stage, info); fragment.append(article);
   });
   return fragment;
+}
+function observeCovers() {
+  const covers = document.querySelectorAll('.cover-frame');
+  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  covers.forEach(cover => {
+    cover.classList.add('will-enter');
+    observer.observe(cover);
+  });
 }
 function renderQuotes(quotes, books) {
   if (!quotes.length) return empty('等待一句，恰好读到心里', '读到有共鸣的文字，就留在这里。', '“');
@@ -151,4 +188,4 @@ window.addEventListener('scroll', () => {
   if (!ticking) { requestAnimationFrame(() => { updateNav(); ticking = false; }); ticking = true; }
 }, { passive: true });
 window.addEventListener('hashchange', updateNav);
-init().then(updateNav);
+init().then(() => { observeCovers(); updateNav(); });

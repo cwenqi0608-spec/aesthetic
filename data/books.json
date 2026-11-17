@@ -12,6 +12,13 @@
     "status": "在读",
     "startedAt": "2026-11-17",
     "cover": "assets/covers/naval-cover.jpg",
-    "summary": "《纳瓦尔宝典》（The Almanack of Naval Ravikant），副标题「财富与幸福指南」，整理硅谷天使投资人纳瓦尔关于财富与幸福的智慧言论。赵灿译，中信出版集团。"
+    "summary": "《纳瓦尔宝典》（The Almanack of Naval Ravikant），副标题「财富与幸福指南」，整理硅谷天使投资人纳瓦尔关于财富与幸福的智慧言论。赵灿译，中信出版集团。",
+    "coverPalette": {
+      "bg": "#dce0dc",
+      "title": "#a38346",
+      "text": "#292c2b",
+      "spine": "#b8bfba",
+      "accent": "#9b7d4b"
+    }
   }
 ]
