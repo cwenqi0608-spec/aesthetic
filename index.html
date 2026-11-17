@@ -5,33 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="审美积累 · 滴水">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#f0eade">
+<meta name="theme-color" content="#e4dcd1">
 <title>审美积累</title>
 <link rel="icon" href="favicon.png?v=94d7b4c" type="image/png">
 <link rel="apple-touch-icon" href="favicon-180.png?v=94d7b4c">
-<link rel="preload" href="assets/fonts/brush.woff2?v=94d7b4c" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/base.css?v=94d7b4c">
 <link rel="stylesheet" href="css/home.css?v=94d7b4c">
 </head>
 <body class="home">
 <main class="scene">
   <picture class="scene-art">
-    <source media="(max-aspect-ratio: 999/1000)" type="image/webp" srcset="assets/img/home-tall-960.webp 960w, assets/img/home-tall-1440.webp 1440w" sizes="100vw">
-    <source media="(max-aspect-ratio: 999/1000)" srcset="assets/img/home-tall-960.jpg 960w, assets/img/home-tall-1440.jpg 1440w" sizes="100vw">
-    <source type="image/webp" srcset="assets/img/home-wide-1600.webp 1600w, assets/img/home-wide-2560.webp 2560w" sizes="100vw">
-    <img src="assets/img/home-wide-1600.jpg" srcset="assets/img/home-wide-1600.jpg 1600w, assets/img/home-wide-2560.jpg 2560w" sizes="100vw" alt="" fetchpriority="high" decoding="async">
+    <source type="image/webp" media="(min-width: 1100px), (min-height: 900px), (min-resolution: 1.5dppx) and (min-height: 560px)" srcset="assets/img/falls-2560.webp">
+    <source type="image/webp" srcset="assets/img/falls-1600.webp">
+    <img src="assets/img/falls-1600.jpg" alt="" fetchpriority="high" decoding="async">
   </picture>
   <canvas id="water" aria-hidden="true"></canvas>
   <canvas id="drops" aria-hidden="true"></canvas>
   <a class="seal" href="./" aria-label="滴水 · 回到首页"><img src="assets/img/seal.png" alt="" width="60" height="82"></a>
-  <nav class="pools" aria-label="三处水面">
-    <a class="pool" href="books.html" aria-label="书单"></a>
-    <a class="pool" href="quotes.html" aria-label="书摘"></a>
-    <a class="pool" href="palettes.html" aria-label="色库"></a>
+  <nav class="spots" aria-label="水下三处">
+    <a class="spot" href="books.html" aria-label="书单"></a>
+    <a class="spot" href="quotes.html" aria-label="书摘"></a>
+    <a class="spot" href="palettes.html" aria-label="色库"></a>
   </nav>
-  <div class="pool-word" aria-hidden="true">书单</div>
-  <div class="pool-word" aria-hidden="true">书摘</div>
-  <div class="pool-word" aria-hidden="true">色库</div>
 </main>
 <script type="module" src="js/home.js?v=94d7b4c"></script>
 </body>

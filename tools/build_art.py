@@ -80,7 +80,7 @@ for _ in range(900):
         fib[int(y) % N, int(x) % N] += 1
         x += np.cos(ang); y += np.sin(ang)
 fib = np.asarray(Image.fromarray((np.clip(fib, 0, 1) * 255).astype('uint8')).filter(ImageFilter.GaussianBlur(.6))) / 255.
-paper = np.array([240, 234, 222.])
+paper = np.array([233, 227, 217.])  # matched to the falls painting (was 240,234,222)
 img = paper[None, None, :] + base[..., None] * np.array([3.2, 3.2, 3.6]) - fib[..., None] * np.array([10, 10, 12.]) * rng.choice([1, -0.7], size=(N, N))[..., None] * 0 - fib[..., None] * 2.2
 Image.fromarray(np.clip(img, 0, 255).astype('uint8')).save(f'{OUT}/paper.jpg', quality=88)
 # translucent grain overlay (for layering over colour)
