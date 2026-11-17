@@ -1,0 +1,12 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+preview.png
+.codex/
+.codex-*
+codex-tmp/
+.codex-tmp/
+*.codex-tmp
