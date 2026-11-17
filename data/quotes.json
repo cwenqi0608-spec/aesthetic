@@ -1,1 +1,48 @@
-[]
+[
+  {
+    "id": "sample-ink-note",
+    "bookId": "",
+    "page": "",
+    "chapter": "原创审美笔记 · 非书籍摘录",
+    "text": "看一滴水落下，\n也看它留出的空白。",
+    "summary": "这是一则用于展示版式与逻辑图的原创示例，不出自《纳瓦尔宝典》或其他书籍。将观察留下，再把感受整理成自己的语言。",
+    "keyPoints": [
+      "观察：留意墨色的浓淡与水的形状。",
+      "整理：从具体感受中找到关系。",
+      "积累：保留值得再次回看的片刻。"
+    ],
+    "tags": ["水墨", "阅读", "审美"],
+    "date": "2026-11-17",
+    "sample": true,
+    "viz": {
+      "type": "flow",
+      "title": "从看见，到留下",
+      "nodes": [
+        {
+          "id": "observe",
+          "label": "观察"
+        },
+        {
+          "id": "reflect",
+          "label": "整理"
+        },
+        {
+          "id": "keep",
+          "label": "积累"
+        }
+      ],
+      "edges": [
+        {
+          "from": "observe",
+          "to": "reflect",
+          "label": "感受"
+        },
+        {
+          "from": "reflect",
+          "to": "keep",
+          "label": "回看"
+        }
+      ]
+    }
+  }
+]

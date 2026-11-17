@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "id": "sample-ink-study",
+    "zone": "风格",
+    "category": "纸本 / 水墨",
+    "type": "image",
+    "title": "一滴青，半纸墨",
+    "sourceImage": "assets/palettes/ink-study.jpg",
+    "colors": [
+      {
+        "hex": "#EDEDE3",
+        "name": "纸白"
+      },
+      {
+        "hex": "#BED6C8",
+        "name": "淡青"
+      },
+      {
+        "hex": "#98B3A2",
+        "name": "青灰"
+      },
+      {
+        "hex": "#7F8980",
+        "name": "石色"
+      },
+      {
+        "hex": "#303531",
+        "name": "浓墨"
+      }
+    ],
+    "date": "2026-11-17",
+    "sample": true
+  }
+]

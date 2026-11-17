@@ -1,0 +1,214 @@
+.cover-stage {
+  display: grid;
+  place-items: center;
+  position: relative;
+  padding: 20px 24px;
+  isolation: isolate;
+  perspective: 1000px;
+}
+.cover-frame {
+  --cover-bg: #dce0dc;
+  --cover-title: #355c53;
+  --cover-text: #292c2b;
+  --cover-spine: #b8bfba;
+  --cover-accent: #607f72;
+  display: block;
+  position: relative;
+  width: 270px;
+  max-width: 100%;
+  aspect-ratio: 0.665;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--cover-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  perspective: 1000px;
+  overflow: visible;
+  transition:
+    opacity 1s ease,
+    translate 1s ease;
+}
+.cover-frame:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 16px;
+  border-radius: 2px;
+}
+.cover-frame:before {
+  content: "";
+  position: absolute;
+  inset: 86% -5% -5%;
+  background: #443c2b;
+  opacity: 0.22;
+  filter: blur(13px);
+  border-radius: 50%;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+.cover-object {
+  display: block;
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(3deg) rotateY(-17deg) rotateZ(-2deg);
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: none;
+}
+.cover-front,
+.cover-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 1px 4px 4px 1px;
+  background: var(--cover-bg);
+  backface-visibility: hidden;
+}
+.cover-front {
+  display: flex;
+  flex-direction: column;
+  padding: 31px 20px 19px 24px;
+  transform: translateZ(13px);
+  background-image:
+    linear-gradient(
+      90deg,
+      #00000016,
+      transparent 3%,
+      #ffffff55 4%,
+      transparent 7%,
+      #ffffff12 85%,
+      #0000000b
+    ),
+    repeating-linear-gradient(0deg, #ffffff0a 0 1px, #00000003 1px 2px);
+  box-shadow:
+    inset 0 0 0 1px #ffffff45,
+    4px 6px 12px #353a321a;
+  overflow: hidden;
+}
+.cover-original {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.12;
+  max-width: 205px;
+  letter-spacing: -0.5px;
+  min-height: 71px;
+  overflow-wrap: anywhere;
+}
+.cover-title {
+  display: block;
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -1px;
+  margin-top: 15px;
+  color: var(--cover-title);
+  background: linear-gradient(
+    115deg,
+    var(--cover-title) 15%,
+    #a5c0ad 42%,
+    var(--cover-title) 61%,
+    #819e8a 83%,
+    var(--cover-title)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 #ffffff70);
+  overflow-wrap: anywhere;
+}
+.cover-motif {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 109px;
+  margin: 20px 12px 0;
+  text-align: center;
+}
+.cover-motif:before,
+.cover-motif:after {
+  content: "";
+  position: absolute;
+  width: 97px;
+  height: 45px;
+  left: 50%;
+  translate: -50% 0;
+  border: 1px solid var(--cover-accent);
+}
+.cover-motif:before {
+  top: 0;
+  border-radius: 80px 80px 0 0;
+  border-bottom: 0;
+  opacity: 0.6;
+}
+.cover-motif:after {
+  bottom: 0;
+  border-radius: 0 0 80px 80px;
+  border-top: 0;
+}
+.cover-subtitle {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  line-height: 1.6;
+  padding: 6px 0;
+  position: relative;
+}
+.cover-credits {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+  font-size: 9px;
+  line-height: 1.7;
+}
+.cover-author {
+  max-width: 160px;
+  min-width: 0;
+}
+.cover-author-name {
+  white-space: nowrap;
+}
+.cover-publisher {
+  max-width: 61px;
+  text-align: right;
+}
+.cover-back {
+  transform: translateZ(-13px);
+  box-shadow: 7px 10px 16px #353a3226;
+}
+.cover-spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 100%;
+  transform-origin: left;
+  transform: translateZ(13px) rotateY(90deg);
+  background:
+    linear-gradient(90deg, #00000018, transparent 40%, #ffffff22),
+    var(--cover-spine);
+  writing-mode: vertical-rl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 5px;
+  color: var(--cover-text);
+  border-block: 1px solid #ffffff30;
+}
+.cover-pages {
+  position: absolute;
+  right: 0;
+  top: 4px;
+  width: 24px;
+  height: calc(100% - 8px);
+  transform-origin: right;
+  transform: translateZ(12px) rotateY(-90deg);
+  background: repeating-linear-gradient(90deg, #e7e3d8 0 1px, #faf8ef 1px 3px);
+  border-block: 1px solid #c7c3b5;
+}

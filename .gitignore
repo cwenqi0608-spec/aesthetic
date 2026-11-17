@@ -10,3 +10,7 @@ preview.png
 codex-tmp/
 .codex-tmp/
 *.codex-tmp
+
+shots/
+preview-cover*.png
+BRIEF.md
