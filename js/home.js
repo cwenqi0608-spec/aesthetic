@@ -1,14 +1,14 @@
-/* 首页 · 瀑布：flowing falls, drifting mist, caustics, ripples, and three stone turtles. No text on screen. */
+/* 首页 · 瀑布：flowing falls, drifting mist, spray, caustics, ripples; three painted stones reveal carved section names. */
 import { Ripple, compile, quad, VERTEX, trackPointer } from './ripple.js?v=3636da0';
 
 /* Geometry in painting pixels (assets/art/home-falls.jpg is 1280×720). */
 const ART = {
   w: 1280, h: 720,
   focus: { wide: [180, 20, 1200, 700], tall: [330, 20, 672, 700] },
-  // hidden light spots, each beside a stone: x, y, heading (deg)
-  spots: {
-    wide: [[300, 614, -16], [478, 552, 12], [935, 512, 28]],
-    tall: [[398, 550, -14], [488, 642, 10], [612, 530, 24]],
+  // three painted stones (centre of the top face x, y; half width, half height of the face)
+  stones: {
+    wide: [[288, 531, 46, 12], [597, 584, 50, 12], [1055, 598, 46, 10]],
+    tall: [[413, 484, 30, 8], [597, 584, 50, 12], [644, 458, 26, 6]],
   },
   base: { x0: 405, x1: 560, y: 426 },            // where the falls strike the pool
   drips: [[392, 46], [521, 66], [549, 176], [566, 300]],
@@ -29,9 +29,11 @@ const touchFirst = matchMedia('(hover: none)').matches;
 const CAPTURE = /[?&]capture\b/.test(location.search);
 const rand = (a, b) => a + Math.random() * (b - a);
 
-let W = 0, H = 0, DPR = 1, kind = 'wide', S = 1, OX = 0, OY = 0, TW = 64; // TW: turtle width in painting px
+let W = 0, H = 0, DPR = 1, kind = 'wide', S = 1, OX = 0, OY = 0;
 const toScreen = (x, y) => [OX + x * S, OY + y * S];
-const spots = () => ART.spots[kind];
+const stones = () => ART.stones[kind];
+const textW = (hw) => Math.max(hw * 2.6, 112 / S);   // engraved name width in painting px (two characters)
+const SQUASH = .8; // (cell is 2:1; text height = width/2·squash)                                     // the stone's top face seen at an angle
 
 /* ---------- layout ---------- */
 function layout() {
@@ -44,12 +46,11 @@ function layout() {
   OY = Math.min(0, Math.max(H - ART.h * S, H / 2 - (g0 + g1) / 2 * S));
   img.style.objectPosition = `${OX}px ${OY}px`;
   for (const c of [glCanvas, fx]) { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); }
-  const tCss = W < 700 ? 78 : Math.max(72, Math.min(92, W * 0.056));
-  TW = tCss / S;
-  spots().forEach(([x, y], i) => {
-    const [sx, sy] = toScreen(x, y), a = links[i];
-    a.style.left = `${sx - tCss * 0.8}px`; a.style.top = `${sy - tCss * 0.6}px`;
-    a.style.width = `${tCss * 1.6}px`; a.style.height = `${tCss * 1.2}px`;
+  stones().forEach(([x, y, hw, hh], i) => {
+    const [sx, sy] = toScreen(x, y + hh), a = links[i];
+    const rx = (Math.max(hw, textW(hw) / 2) + 10) * S, ry = (hh * 2.6 + 12) * S;
+    a.style.left = `${sx - rx}px`; a.style.top = `${sy - ry}px`;
+    a.style.width = `${rx * 2}px`; a.style.height = `${ry * 2}px`;
   });
   if (ripple) ripple.resize(W, H);
   kick();
@@ -114,53 +115,54 @@ function drawOverlay() {
   }
 }
 
-/* ---------- turtles: atlas with carved seal-script names ---------- */
-const CELL_W = 384, CELL_H = 576;
-let TA = 310 / 512, glyphs = null;
+/* ---------- engraved names: R = recessed stroke, G = light bevel, B = soft halo ---------- */
+const CELL_W = 512, CELL_H = 256;
+let glyphs = null;
 async function buildAtlas() {
-  const [im, data] = await Promise.all([
-    new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = 'assets/img/turtle.png?v=3636da0'; }),
-    fetch('js/seal-glyphs.json?v=3636da0').then((r) => r.json()),
-  ]);
-  glyphs = data.glyphs; const m = data.turtle; TA = im.width / im.height;
-  const c = document.createElement('canvas'); c.width = CELL_W * 3; c.height = CELL_H;
-  const g = c.getContext('2d');
-  const px = (CELL_W - im.width) / 2, py = (CELL_H - im.height) / 2;
+  const data = await fetch('js/seal-glyphs.json?v=3636da0').then((r) => r.json());
+  glyphs = data.glyphs;
+  const mk = () => { const c = document.createElement('canvas'); c.width = CELL_W; c.height = CELL_H * 3; return c; };
+  const layers = [mk(), mk(), mk()];
+  const ch = 196, gap = 22;
   NAMES.forEach((name, i) => {
-    const ox = i * CELL_W + px, oy = py;
-    g.drawImage(im, ox, oy);
-    const chars = [...name], cs = 100;                       // char box in atlas px, stacked vertically
-    chars.forEach((ch, k) => {
-      const gl = glyphs[ch]; const [x0, y0, x1, y1] = gl.bounds;
-      const s = cs / Math.max(x1 - x0, y1 - y0);
-      const cx = ox + m.shellX, cy = oy + m.shellY + (k - (chars.length - 1) / 2) * (cs + 6);
-      const path = new Path2D(gl.d);
-      const draw = (dx, dy, style, lw) => {
-        g.save(); g.translate(cx + dx, cy + dy); g.scale(s, -s); g.translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
-        g.fillStyle = style; g.strokeStyle = style; g.lineWidth = lw / s; g.lineJoin = 'round'; g.lineCap = 'round';
+    const gs = [...name].map((c) => { const b = glyphs[c].bounds; const sc = Math.min(ch / (b[3] - b[1]), 200 / (b[2] - b[0])); return { c, b, sc, w: (b[2] - b[0]) * sc }; });
+    const total = gs.reduce((a, g) => a + g.w, 0) + gap * (gs.length - 1);
+    let xx = (CELL_W - total) / 2;
+    gs.forEach(({ c, b, sc, w }) => {
+      const gph = glyphs[c]; const [x0, y0, x1, y1] = b;
+      const cx = xx + w / 2, cy = i * CELL_H + CELL_H / 2; xx += w + gap;
+      const path = new Path2D(gph.d);
+      const draw = (g, dx, dy, lw, blur) => {
+        g.save(); if (blur) g.filter = `blur(${blur}px)`;
+        g.translate(cx + dx, cy + dy); g.scale(sc, -sc); g.translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+        g.fillStyle = g.strokeStyle = '#fff'; g.lineWidth = lw / sc; g.lineJoin = g.lineCap = 'round';
         g.fill(path); g.stroke(path); g.restore();
       };
-      draw(2.2, 2.6, 'rgba(240,238,230,.85)', 7);           // light lower bevel
-      draw(0, 0, 'rgba(28,28,26,.95)', 7);                  // recessed stroke
-      draw(-1, -1.2, 'rgba(6,6,5,.6)', 2.6);             // deeper inner shadow
+      draw(layers[0].getContext('2d'), 0, 0, 9, 0);          // carved groove
+      draw(layers[1].getContext('2d'), 3.5, 4.5, 9, 1);        // lit lower lip of the groove
+      draw(layers[2].getContext('2d'), 0, 0, 46, 16);          // soft halo so the name stays legible off the stone
     });
   });
-  return c;
+  const out = document.createElement('canvas'); out.width = CELL_W; out.height = CELL_H * 3;
+  const o = out.getContext('2d'), od = o.createImageData(CELL_W, CELL_H * 3);
+  const ds = layers.map((c) => c.getContext('2d').getImageData(0, 0, CELL_W, CELL_H * 3).data);
+  for (let p = 0; p < od.data.length; p += 4) { od.data[p] = ds[0][p + 3]; od.data[p + 1] = ds[1][p + 3]; od.data[p + 2] = ds[2][p + 3]; od.data[p + 3] = 255; }
+  o.putImageData(od, 0, 0);
+  return out;
 }
 
 /* ---------- shader ---------- */
 const FRAG = `#version 300 es
 precision highp float;
 in vec2 vUv; out vec4 o;
-uniform sampler2D uImg, uMask, uSim, uTur;
+uniform sampler2D uImg, uMask, uSim, uTxt;
 uniform vec2 uRes, uImgSize, uSimTexel;
 uniform vec4 uView;            // ox, oy (device px), scale, sim on
 uniform float uTime;
-uniform vec4 uSpot[3];         // x, y, glow boost, -
-uniform vec4 uTurt[3];         // x, y, width (painting px), heading (rad)
-uniform float uEm[3];
-uniform float uTA;             // turtle aspect w/h
-uniform vec2 uCell;            // turtle size / cell size
+uniform vec4 uStone[3];        // top-face centre x, y; half width, half height (painting px)
+uniform float uTW[3];          // engraved name width (painting px)
+uniform float uEm[3];          // reveal 0..1
+uniform float uSquash;
 uniform vec3 uPaper;
 
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
@@ -192,6 +194,20 @@ void main(){
     float hd = texture(uSim, vUv - vec2(0.,uSimTexel.y)).r, hu = texture(uSim, vUv + vec2(0.,uSimTexel.y)).r;
     g = vec2(hr - hl, hd - hu);
   }
+  // small ripple ring spreading from the revealed stone's waterline
+  for(int i=0;i<3;i++){
+    float e = uEm[i]; if(e < .01) continue;
+    vec4 st = uStone[i];
+    vec2 c = st.xy + vec2(0., st.w * 1.9);
+    vec2 q = (ip - c) / vec2(st.z * 1.12, st.z * .30);
+    float d = length(q);
+    for(int k=0;k<2;k++){
+      float ph = fract(t * .42 + float(k) * .5);
+      float r = 1. + ph * .95;
+      float w = exp(-pow((d - r) / .06, 2.)) * (1. - ph) * e;
+      g += normalize(q + 1e-4) * vec2(1., 3.) * w * .055;
+    }
+  }
   float ws = mix(.28, 1., m.g);
   vec2 off = g * 6. * ws / uView.z * 2.;
   vec3 col = img(ip + off);
@@ -220,38 +236,35 @@ void main(){
     float c = caustic(cp, t) * .6 + caustic(cp * 1.63 + 7.3, t * 1.3) * .4;
     float glow = 0.;
     for(int i=0;i<3;i++){
-      vec2 d = (ip - uSpot[i].xy) / vec2(46., 22.);
-      float k = exp(-dot(d,d));
-      glow += k * (.55 + .2 * sin(t * 1.4 + float(i) * 2.1) + uSpot[i].z);
+      vec4 st = uStone[i];
+      vec2 d = (ip - st.xy - vec2(0., st.w * 1.9)) / vec2(st.z * 1.7, st.z * .55);
+      glow += exp(-dot(d,d)) * uEm[i] * (.9 + .15 * sin(t * 1.6 + float(i) * 2.1));
     }
-    float caus = c * (.07 + glow * .35);
+    float caus = c * (.07 + glow * .45);
     col += vec3(.90, .96, .94) * caus * m.g;
     col += vec3(.86, .93, .91) * glow * .07 * m.g;
   }
 
-  // --- 石龟 rising from beneath the water ---
+  // --- 石上刻字: the stone glows faintly from the water and its name appears carved on the top face ---
   for(int i=0;i<3;i++){
-    float e = uEm[i];
-    if(e < .003) continue;
-    vec4 T = uTurt[i];
-    vec2 p = ip - T.xy; p.y -= (1. - e) * 9.;           // drifts up as it surfaces
-    p.y /= .62;                                         // laid on the water plane
-    float cs = cos(-T.w), sn = sin(-T.w); p = vec2(cs*p.x - sn*p.y, sn*p.x + cs*p.y);
-    float wdt = T.z * (.88 + .12 * e);
-    vec2 tuv = vec2(p.x / wdt, p.y / (wdt / uTA)) + .5;
-    float sub = 1. - e;
-    tuv += (vec2(noise(tuv * 6. + t), noise(tuv * 6. - t + 4.)) - .5) * .07 * sub + g * .12 * sub;
-    vec2 cuv = (tuv - .5) * uCell + .5;
-    if(cuv.x < 0. || cuv.x > 1. || cuv.y < 0. || cuv.y > 1.) continue;
-    vec2 auv = vec2((cuv.x + float(i)) / 3., cuv.y);
-    float lod = pow(sub, 1.4) * 5.;
-    // soft shadow on the water
-    vec4 sh = texture(uTur, vec2((clamp(cuv.x - .02, 0., 1.) + float(i)) / 3., clamp(cuv.y - .03, 0., 1.)), 4.);
-    col *= 1. - sh.a * .22 * e * e;
-    vec4 s = texture(uTur, auv, lod);
-    vec3 tc = mix(s.rgb * vec3(.80, .82, .80), vec3(.70, .76, .73) * col, sub * .7);
-    tc += g.y * .5 * e;                                  // wet sheen follows the ripples
-    col = mix(col, tc, s.a * smoothstep(0., .55, e) * mix(.45, 1., e));
+    float e = uEm[i]; if(e < .003) continue;
+    vec4 st = uStone[i];
+    // lit from below: a soft cool light on the stone and the water around it
+    vec2 dl = (ip - st.xy - vec2(0., st.w * 1.2)) / vec2(st.z * 1.5, st.w * 4.5);
+    float lit = exp(-dot(dl, dl) * 1.3) * e;
+    col += vec3(.62, .74, .71) * lit * .18 * (1.15 - dot(col, vec3(.33)));
+    float tw = uTW[i];
+    vec2 p = ip - st.xy - vec2(0., st.w * .45);
+    p += g * 3.2 * (1. - e) + (vec2(noise(p * .2 + t * 2.), noise(p * .2 - t * 2. + 5.)) - .5) * 2.5 * (1. - e);
+    vec2 tuv = vec2(p.x / tw + .5, p.y / (tw * .5 * uSquash) + .5);
+    if(tuv.x < 0. || tuv.x > 1. || tuv.y < 0. || tuv.y > 1.) continue;
+    // revealed by the spreading ripple, centre first
+    float rd = length((tuv - .5) * vec2(1., .5));
+    float rev = smoothstep(e * .75 + .02, e * .75 - .14, rd) * smoothstep(0., .35, e);
+    vec3 a = texture(uTxt, vec2(tuv.x, (tuv.y + float(i)) / 3.)).rgb;
+    col = mix(col, uPaper * .97, a.b * .74 * rev);
+    col += vec3(.95, .96, .93) * a.g * (1. - a.r) * .30 * rev;
+    col = mix(col, vec3(.10, .11, .10), a.r * .86 * rev);
   }
 
   // specular glints on ripples
@@ -270,7 +283,7 @@ void main(){
   o = vec4(col, 1.);
 }`;
 
-let gl = null, prog, texImg, texMask, texTur, ripple = null, texKindReady = false, atlasReady = false;
+let gl = null, prog, texImg, texMask, texTxt, ripple = null, texKindReady = false, atlasReady = false;
 function mkTex(src, mip) {
   const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
@@ -288,25 +301,26 @@ function initGL() {
     quad(gl); prog = compile(gl, VERTEX, FRAG);
     ripple = new Ripple(gl); if (!ripple.ok) ripple = null;
     const mask = new Image(); mask.onload = () => { texMask = mkTex(mask, false); kick(); }; mask.src = 'assets/img/falls-mask.png?v=3636da0';
-    buildAtlas().then((c) => { texTur = mkTex(c, true); atlasReady = true; kick(); }).catch((e) => console.warn(e));
+    buildAtlas().then((c) => { texTxt = mkTex(c, true); atlasReady = true; kick(); }).catch((e) => console.warn(e));
     return true;
   } catch (e) { console.warn('WebGL off', e); gl = null; glCanvas.remove(); return false; }
 }
 function uploadImage() { if (!gl || !img.complete || !img.naturalWidth) return; if (texImg) gl.deleteTexture(texImg); texImg = mkTex(img, true); texKindReady = true; }
 
-/* turtles: emergence state */
-const em = [0, 0, 0], target = [0, 0, 0], boost = [0, 0, 0], surfaced = [false, false, false];
+/* stones: reveal state */
+const em = [0, 0, 0], target = [0, 0, 0], shown = [false, false, false];
 let hovered = -1, revealed = -1;
-const turtleArr = new Float32Array(12), spotArr = new Float32Array(12);
-function updateTurtles(dt) {
+const stoneArr = new Float32Array(12), twArr = new Float32Array(3);
+function updateStones(dt) {
   for (let i = 0; i < 3; i++) {
     const want = target[i];
     if (reduced) em[i] = want;
-    else em[i] += (want - em[i]) * Math.min(1, dt * (want > em[i] ? 1.25 : 1.6));
-    boost[i] += ((i === hovered ? .6 : 0) - boost[i]) * Math.min(1, dt * 3);
-    if (!surfaced[i] && em[i] > .35 && want > 0) { surfaced[i] = true; if (ripple) { const [x, y] = spots()[i]; splatImg(x, y, 14, 1.4); } }
-    if (surfaced[i] && em[i] < .2) surfaced[i] = false;
-    if (ripple && em[i] > .7 && !reduced && Math.random() < dt * .9) { const [x, y] = spots()[i]; splatImg(x + rand(-TW * .4, TW * .4), y + rand(-6, 6), 6, .35); } // paddling
+    else em[i] += Math.sign(want - em[i]) * Math.min(Math.abs(want - em[i]), dt * (want > em[i] ? .8 : 1.4));
+    if (!shown[i] && em[i] > .02 && want > 0) {               // the reveal starts with a ring of ripples round the stone
+      shown[i] = true;
+      if (ripple && !reduced) { const [x, y, hw, hh] = stones()[i]; for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; splatImg(x + Math.cos(a) * hw * 1.15, y + hh * 1.9 + Math.sin(a) * hw * .3, 7, .5); } }
+    }
+    if (shown[i] && em[i] < .01) shown[i] = false;
   }
 }
 function drawGL() {
@@ -317,20 +331,15 @@ function drawGL() {
   const bind = (unit, tex, name) => { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(u[name], unit); };
   bind(0, texImg, 'uImg'); bind(1, texMask, 'uMask');
   if (ripple) { bind(2, ripple.texture, 'uSim'); gl.uniform2f(u.uSimTexel, 1 / ripple.w, 1 / ripple.h); }
-  if (atlasReady) bind(3, texTur, 'uTur');
+  if (atlasReady) bind(3, texTxt, 'uTxt');
   gl.uniform2f(u.uRes, glCanvas.width, glCanvas.height);
   gl.uniform2f(u.uImgSize, ART.w, ART.h);
   gl.uniform4f(u.uView, OX * DPR, OY * DPR, S * DPR, ripple ? 1 : 0);
   gl.uniform1f(u.uTime, now);
-  spots().forEach(([x, y, hd], i) => {
-    spotArr.set([x, y, boost[i], 0], i * 4);
-    const bob = reduced ? 0 : Math.sin(now * 1.3 + i * 2) * 1.2;
-    turtleArr.set([x + (reduced ? 0 : Math.sin(now * .5 + i) * 1.5), y + bob, TW, (hd + (reduced ? 0 : Math.sin(now * .8 + i) * 4)) * Math.PI / 180], i * 4);
-  });
-  gl.uniform4fv(u.uSpot, spotArr); gl.uniform4fv(u.uTurt, turtleArr);
+  stones().forEach(([x, y, hw, hh], i) => { stoneArr.set([x, y, hw, hh], i * 4); twArr[i] = textW(hw); });
+  gl.uniform4fv(u.uStone, stoneArr); gl.uniform1fv(u.uTW, twArr);
   gl.uniform1fv(u.uEm, new Float32Array(atlasReady ? em : [0, 0, 0]));
-  gl.uniform1f(u.uTA, TA);
-  gl.uniform2f(u.uCell, (TA * 512) / CELL_W, 512 / CELL_H);
+  gl.uniform1f(u.uSquash, SQUASH);
   gl.uniform3f(u.uPaper, 0.905, 0.885, 0.85);
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
@@ -338,9 +347,10 @@ function drawGL() {
 /* ---------- hover / tap ---------- */
 function spotAt(x, y) {
   let best = -1, bd = 1;
-  spots().forEach(([sx0, sy0], i) => {
-    const [sx, sy] = toScreen(sx0, sy0), r = TW * S;
-    const d = ((x - sx) / (r * .85)) ** 2 + ((y - sy) / (r * .62)) ** 2;
+  stones().forEach(([x0, y0, hw, hh], i) => {
+    const [sx, sy] = toScreen(x0, y0 + hh);
+    const rx = (Math.max(hw, textW(hw) / 2) + 10) * S, ry = (hh * 2.6 + 12) * S;
+    const d = ((x - sx) / rx) ** 2 + ((y - sy) / ry) ** 2;
     if (d < bd) { bd = d; best = i; }
   });
   return best;
@@ -352,7 +362,7 @@ function setHover(i) {
   kick();
 }
 function enter(i) {
-  if (ripple) { const [x, y] = spots()[i]; splatImg(x, y, 26, 2.2); }
+  if (ripple) { const [x, y, , hh] = stones()[i]; splatImg(x, y + hh * 1.9, 22, 1.6); }
   target[i] = 1; scene.classList.add('leaving');
   setTimeout(() => (location.href = HREF[i]), reduced ? 0 : 450);
 }
@@ -377,7 +387,7 @@ let last = 0, raf = 0, dtLast = 0.016;
 function tick(dt) {
   dtLast = dt;
   if (!reduced) { now += dt; step(dt); }
-  updateTurtles(dt);
+  updateStones(dt);
   drawGL(); drawOverlay();
 }
 function frame(t) {
@@ -401,7 +411,7 @@ function init() {
   img.addEventListener('load', onImg);
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(layout, 80); });
   if (CAPTURE) window.__tick = (dt, n = 1) => { for (let i = 0; i < n; i++) tick(dt); };
-  window.__dishui = { spots: () => spots().map(([x, y]) => { const [sx, sy] = toScreen(x, y); return { x: sx, y: sy }; }), ready: () => !!(texImg && texMask && atlasReady), em: () => em.slice() };
+  window.__dishui = { spots: () => stones().map(([x, y, , hh]) => { const [sx, sy] = toScreen(x, y + hh * .5); return { x: sx, y: sy }; }), ready: () => !!(texImg && texMask && atlasReady), em: () => em.slice() };
   kick();
 }
 init();

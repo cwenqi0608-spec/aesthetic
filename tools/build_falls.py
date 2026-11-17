@@ -1,4 +1,4 @@
-"""Build the 瀑布 homepage assets from assets/art/home-falls.jpg and turtle-raw.jpg.
+"""Build the 瀑布 homepage assets from assets/art/home-falls.jpg.
 Run: python3 tools/build_falls.py   (Pillow, numpy, fonttools)"""
 from PIL import Image, ImageFilter, ImageDraw
 import numpy as np, os, json
@@ -36,28 +36,6 @@ B = np.clip(mist, 0, 1)
 rgb = np.dstack([R, G, B]) * 255
 Image.fromarray(rgb.astype('uint8')).save(f'{OUT}/falls-mask.png', optimize=True)
 
-# ---- turtle: luminance key to transparent, crop, fill interior holes
-t = Image.open('assets/art/turtle-raw.jpg').convert('RGB')
-a = np.asarray(t).astype(float); L = a.mean(2)
-bgL = np.percentile(np.concatenate([L[:24].ravel(), L[-24:].ravel(), L[:, :24].ravel(), L[:, -24:].ravel()]), 5)
-alpha = np.clip((bgL - 5 - L) / 28, 0, 1)
-hard = Image.fromarray(((alpha > .35) * 255).astype(np.uint8), 'L').copy()
-ImageDraw.floodfill(hard, (0, 0), 128)                          # mark outside
-inside = np.asarray(hard) != 128
-alpha = np.where(inside, np.maximum(alpha, 1), alpha)
-alpha = np.asarray(Image.fromarray((alpha * 255).astype('uint8')).filter(ImageFilter.GaussianBlur(.8))).astype(float) / 255
-col = 255 - (255 - a) / np.maximum(alpha[..., None], 1e-3)
-col = np.where(inside[..., None], a, np.clip(col, 0, 255))
-rgba = Image.fromarray(np.dstack([col, alpha * 255]).astype('uint8'), 'RGBA')
-bb = Image.fromarray((alpha > .05).astype('uint8') * 255).getbbox()
-rgba = rgba.crop((bb[0] - 6, bb[1] - 6, bb[2] + 6, bb[3] + 6))
-th = 512; rgba = rgba.resize((round(rgba.width * th / rgba.height), th), Image.LANCZOS)
-rgba.save(f'{OUT}/turtle.png', optimize=True)
-# shell centre in the cropped image (for the carved name)
-cy_raw = 560; sx = th / (bb[3] - bb[1] + 12)
-meta = {'w': rgba.width, 'h': rgba.height, 'shellX': round((512 - bb[0] + 6) * sx), 'shellY': round((cy_raw - bb[1] + 6) * sx), 'shellR': round(230 * sx)}
-print('turtle', meta)
-
 # ---- seal-script glyph outlines (敬峰中山王篆, OFL-1.1) as SVG path data
 from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
@@ -67,7 +45,7 @@ glyphs = {}
 for ch in '书单摘色库':
     g = cmap[ord(ch)]; pen = SVGPathPen(gs); gs[g].draw(pen); bp = BoundsPen(gs); gs[g].draw(bp)
     glyphs[ch] = {'d': pen.getCommands(), 'bounds': bp.bounds, 'upm': f['head'].unitsPerEm}
-json.dump({'turtle': meta, 'glyphs': glyphs, 'font': 'JFZSKSealScript 3.5 (Jingfeng Liu), SIL OFL 1.1'}, open('js/seal-glyphs.json', 'w'), ensure_ascii=False)
+json.dump({'glyphs': glyphs, 'font': 'JFZSKSealScript 3.5 (Jingfeng Liu), SIL OFL 1.1'}, open('js/seal-glyphs.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 
 # ---- header bands for the inner pages, cut from the same painting
 for name, box in [('band-cliff', (200, 0, 1000, 470)), ('band-mountains', (820, 120, 1280, 420)), ('band-water', (560, 380, 1280, 720))]:
