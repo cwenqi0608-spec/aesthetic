@@ -1,4 +1,4 @@
-import { $, $$, loadJSON, esc, h, inkDefs, inkTrail, brushPath, ensoPath, rng, fmtDate } from './common.js?v=dev';
+import { $, $$, loadJSON, esc, h, inkDefs, inkTrail, brushPath, ensoPath, rng, fmtDate } from './common.js?v=6d04da1';
 
 const root = $('#content');
 inkDefs();

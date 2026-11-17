@@ -77,7 +77,7 @@ export function inkDefs() {
 /* Ripple light overlay for 书单 — water shimmer following the cursor across the page */
 export async function rippleOverlay() {
   if (reduced()) return null;
-  const { Ripple, compile, quad, VERTEX, trackPointer } = await import('./ripple.js?v=dev');
+  const { Ripple, compile, quad, VERTEX, trackPointer } = await import('./ripple.js?v=6d04da1');
   const c = document.createElement('canvas'); c.className = 'ripple-layer'; c.setAttribute('aria-hidden', 'true');
   document.body.appendChild(c);
   const gl = c.getContext('webgl2', { premultipliedAlpha: true, alpha: true, antialias: false });
