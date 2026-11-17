@@ -1,5 +1,5 @@
 /* 首页 · 滴水：painted landscape + GPU water + gravity drips. No text on screen. */
-import { Ripple, compile, quad, VERTEX, trackPointer } from './ripple.js?v=6d04da1';
+import { Ripple, compile, quad, VERTEX, trackPointer } from './ripple.js?v=94d7b4c';
 
 /* Geometry measured on the original paintings (pixel coords of the 1280×720 / 720×1280 art). */
 const LAYOUTS = {
