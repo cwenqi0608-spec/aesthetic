@@ -1,5 +1,5 @@
 /* 首页 · 瀑布：flowing falls, drifting mist, caustics, ripples, and three stone turtles. No text on screen. */
-import { Ripple, compile, quad, VERTEX, trackPointer } from './ripple.js?v=dev';
+import { Ripple, compile, quad, VERTEX, trackPointer } from './ripple.js?v=3636da0';
 
 /* Geometry in painting pixels (assets/art/home-falls.jpg is 1280×720). */
 const ART = {
@@ -119,8 +119,8 @@ const CELL_W = 384, CELL_H = 576;
 let TA = 310 / 512, glyphs = null;
 async function buildAtlas() {
   const [im, data] = await Promise.all([
-    new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = 'assets/img/turtle.png?v=dev'; }),
-    fetch('js/seal-glyphs.json?v=dev').then((r) => r.json()),
+    new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = 'assets/img/turtle.png?v=3636da0'; }),
+    fetch('js/seal-glyphs.json?v=3636da0').then((r) => r.json()),
   ]);
   glyphs = data.glyphs; const m = data.turtle; TA = im.width / im.height;
   const c = document.createElement('canvas'); c.width = CELL_W * 3; c.height = CELL_H;
@@ -287,7 +287,7 @@ function initGL() {
     if (!gl) throw new Error('no webgl2');
     quad(gl); prog = compile(gl, VERTEX, FRAG);
     ripple = new Ripple(gl); if (!ripple.ok) ripple = null;
-    const mask = new Image(); mask.onload = () => { texMask = mkTex(mask, false); kick(); }; mask.src = 'assets/img/falls-mask.png?v=dev';
+    const mask = new Image(); mask.onload = () => { texMask = mkTex(mask, false); kick(); }; mask.src = 'assets/img/falls-mask.png?v=3636da0';
     buildAtlas().then((c) => { texTur = mkTex(c, true); atlasReady = true; kick(); }).catch((e) => console.warn(e));
     return true;
   } catch (e) { console.warn('WebGL off', e); gl = null; glCanvas.remove(); return false; }
