@@ -55,7 +55,13 @@ function renderBooks(books) {
     if (book.subtitle) motif.append(el('span', 'cover-subtitle', book.subtitle));
     front.append(motif);
     const credits = el('span', 'cover-credits');
-    if (book.authorCredit || book.author) credits.append(el('span', 'cover-author', book.authorCredit || book.author));
+    if (book.authorCredit || book.author) {
+      const author = el('span', 'cover-author');
+      // Keep Latin names together, allowing a wrap before the name in mixed credits.
+      const parts = (book.authorCredit || book.author).split(/([（(]?[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ.'’\-]*(?:[ \t]+[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ.'’\-]*)*[）)]?)/g);
+      parts.forEach((part, index) => author.append(index % 2 ? el('span', 'cover-author-name', part) : document.createTextNode(part)));
+      credits.append(author);
+    }
     if (book.publisher) credits.append(el('span', 'cover-publisher', book.publisher));
     front.append(credits);
     object.append(el('span', 'cover-back'), el('span', 'cover-pages'), el('span', 'cover-spine', book.title), front);
