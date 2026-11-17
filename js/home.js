@@ -1,5 +1,5 @@
 /* 首页 · 瀑布：flowing falls, drifting mist, spray, caustics, ripples; three painted stones reveal carved section names. */
-import { Ripple, compile, quad, VERTEX, trackPointer } from './ripple.js?v=3636da0';
+import { Ripple, compile, quad, VERTEX, trackPointer } from './ripple.js?v=168ad2e';
 
 /* Geometry in painting pixels (assets/art/home-falls.jpg is 1280×720). */
 const ART = {
@@ -119,7 +119,7 @@ function drawOverlay() {
 const CELL_W = 512, CELL_H = 256;
 let glyphs = null;
 async function buildAtlas() {
-  const data = await fetch('js/seal-glyphs.json?v=3636da0').then((r) => r.json());
+  const data = await fetch('js/seal-glyphs.json?v=168ad2e').then((r) => r.json());
   glyphs = data.glyphs;
   const mk = () => { const c = document.createElement('canvas'); c.width = CELL_W; c.height = CELL_H * 3; return c; };
   const layers = [mk(), mk(), mk()];
@@ -300,7 +300,7 @@ function initGL() {
     if (!gl) throw new Error('no webgl2');
     quad(gl); prog = compile(gl, VERTEX, FRAG);
     ripple = new Ripple(gl); if (!ripple.ok) ripple = null;
-    const mask = new Image(); mask.onload = () => { texMask = mkTex(mask, false); kick(); }; mask.src = 'assets/img/falls-mask.png?v=3636da0';
+    const mask = new Image(); mask.onload = () => { texMask = mkTex(mask, false); kick(); }; mask.src = 'assets/img/falls-mask.png?v=168ad2e';
     buildAtlas().then((c) => { texTxt = mkTex(c, true); atlasReady = true; kick(); }).catch((e) => console.warn(e));
     return true;
   } catch (e) { console.warn('WebGL off', e); gl = null; glCanvas.remove(); return false; }
