@@ -101,5 +101,5 @@ data/palettes.json         色库数组
 - 系统开启“减少动态效果”时展示静止山水与水面名称，无滴水或涟漪循环。
 - 隐藏标签页停止动画，内页不加载首页物理循环。粒子有上限，指针涟漪节流，Canvas 像素比最高为 2。
 - 全部站内资源使用相对路径，兼容根路径与 GitHub Pages 的 `/aesthetic/`。Google Fonts 为唯一外部样式资源。
-- 修改 CSS / JS 后，同步更新所有引用它们的 HTML 的 `?v=` 版本（当前 `ink3`）。
+- 修改 CSS / JS 后，同步更新所有引用它们的 HTML 的 `?v=` 版本（当前 `69ad37f`）。
 - 保留 `.nojekyll`、`.github/workflows/pages.yml` 与 `.gitignore` 条目。人工推送 `main` 后由现有 GitHub Pages 工作流部署；本次改版不自动提交或推送。
